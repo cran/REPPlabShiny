@@ -1,9 +1,10 @@
-d86dfbfe3c61e3cdd986f920c95ac039 *DESCRIPTION
+ae22342cd7d7365c385b1c09ef3a01f1 *DESCRIPTION
 8594419317aac3f50d2fdb270a8531c4 *NAMESPACE
 e4d52ebfa24cb2f2a4a347ee915bdab3 *R/REPPlabShiny.R
-8c0b408d99dbf0ef31da543dee1a0751 *inst/ChangeLog
+8d36178ad468f481e889ebde71680f79 *inst/ChangeLog
+5c7c23112f13911b1defbf774fc6cfdb *inst/shiny-examples/myapp/debug.log
 8353d2fb5d860ae8e3def448615f893d *inst/shiny-examples/myapp/global.R
-233545c8b40ee760084fa9fb3719c976 *inst/shiny-examples/myapp/server.R
+a7539efbbf077154efc00d7cb4ae58b3 *inst/shiny-examples/myapp/server.R
 b823284898f8578446a3ee105b477904 *inst/shiny-examples/myapp/ui.R
 165c93f04e1c9d48532c344b1c2159da *man/REPPlabShiny.Rd
 bc33809510157abf68be28e2e9a6a519 *man/print.epplabshiny.Rd

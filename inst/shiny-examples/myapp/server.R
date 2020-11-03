@@ -393,52 +393,41 @@ shinyServer(function(input, output, session) {
   
   #----------------------------------------Outlier Detection -----------------------------------------------------
   
+  ReactiveEpplabOutlier <- reactive({
+  EPPlabOutlier(
+    dataSwitch()(input$chooseObjectoutlier),
+    k = as.numeric(input$kselect),
+    location = as.function(as.list.function(input$locationselect)),
+    scale = as.function(as.list.function(input$scaleselect))
+  )})
+  
+  
   output$plot5 <-
     renderPlot(boxplot(X[auswahl(input$eppobsselect), auswahl(input$eppvarselect)]))
   
   output$summaryoutlier <-
     renderPrint({
-      b <-
-        EPPlabOutlier(
-          dataSwitch()(input$chooseObjectoutlier),
-          k = as.numeric(input$kselect),
-          location = as.function(as.list.function(input$locationselect)),
-          scale = as.function(as.list.function(input$scaleselect))
-        )
+      b <- ReactiveEpplabOutlier()
       b$location <- input$locationselect
       b$scale <- input$scaleselect
       summary(b)
     })
   
-  output$plot6 <- renderPlot(plot(
-    EPPlabOutlier(
-      dataSwitch()(input$chooseObjectoutlier),
-      k = as.numeric(input$kselect),
-      location = as.function(as.list.function(input$locationselect)),
-      scale = as.function(as.list.function(input$scaleselect))
-    )
-  ))
+  output$plot6 <- renderPlot({validate(need(sum(ReactiveEpplabOutlier()$outlier)>0,"With this settings there are no outliers"))
+                             plot(ReactiveEpplabOutlier())})
+  
   #------------------------Visual inspection--------------------------------
   
   output$plotoutliercandidates <- renderPlot({
+    validate(need(sum(ReactiveEpplabOutlier()$outlier)>0,"With this settings there are no outliers"))
     plot(
       fitted(dataSwitch()(input$chooseObjectoutlier), which = input$visualrun1)[apply(
-        EPPlabOutlier(
-          dataSwitch()(input$chooseObjectoutlier),
-          k = as.numeric(input$kselect),
-          location = as.function(as.list.function(input$locationselect)),
-          scale = as.function(as.list.function(input$scaleselect))
-        )$outlier,
+        ReactiveEpplabOutlier()$outlier,
         1,
         sum
       ) < input$numoutlier +1, ],
       fitted(dataSwitch()(input$chooseObjectoutlier), which = input$visualrun2)[apply(
-        EPPlabOutlier(
-          dataSwitch()(input$chooseObjectoutlier),
-          k = as.numeric(input$kselect),
-          location = as.function(as.list.function(input$locationselect)),
-          scale = as.function(as.list.function(input$scaleselect))
-        )$outlier,
+        ReactiveEpplabOutlier()$outlier,
         1,
         sum
       ) < input$numoutlier +1, ],
@@ -463,66 +452,41 @@ shinyServer(function(input, output, session) {
       ylab = "Projection 1",
       xlab = "Projection 2"
     )
-    
+
     points(
       fitted(dataSwitch()(input$chooseObjectoutlier), which = input$visualrun1)[apply(
-        EPPlabOutlier(
-          dataSwitch()(input$chooseObjectoutlier),
-          k = as.numeric(input$kselect),
-          location = as.function(as.list.function(input$locationselect)),
-          scale = as.function(as.list.function(input$scaleselect))
-        )$outlier,
+        ReactiveEpplabOutlier()$outlier,
         1,
         sum
       ) > input$numoutlier, ],
       fitted(dataSwitch()(input$chooseObjectoutlier), which = input$visualrun2)[apply(
-        EPPlabOutlier(
-          dataSwitch()(input$chooseObjectoutlier),
-          k = as.numeric(input$kselect),
-          location = as.function(as.list.function(input$locationselect)),
-          scale = as.function(as.list.function(input$scaleselect))
-        )$outlier,
+        ReactiveEpplabOutlier()$outlier,
         1,
         sum
       ) > input$numoutlier, ],
       col = "red",
       pch = 16
     )
-    
+
     text(
       fitted(dataSwitch()(input$chooseObjectoutlier), which = input$visualrun1)[apply(
-        EPPlabOutlier(
-          dataSwitch()(input$chooseObjectoutlier),
-          k = as.numeric(input$kselect),
-          location = as.function(as.list.function(input$locationselect)),
-          scale = as.function(as.list.function(input$scaleselect))
-        )$outlier,
+        ReactiveEpplabOutlier()$outlier,
         1,
         sum
       ) > input$numoutlier, ],
       fitted(dataSwitch()(input$chooseObjectoutlier), which = input$visualrun2)[apply(
-        EPPlabOutlier(
-          dataSwitch()(input$chooseObjectoutlier),
-          k = as.numeric(input$kselect),
-          location = as.function(as.list.function(input$locationselect)),
-          scale = as.function(as.list.function(input$scaleselect))
-        )$outlier,
+        ReactiveEpplabOutlier()$outlier,
         1,
         sum
       ) > input$numoutlier, ],
       pos = 2,
       label = row.names(X)[apply(
-        EPPlabOutlier(
-          dataSwitch()(input$chooseObjectoutlier),
-          k = as.numeric(input$kselect),
-          location = as.function(as.list.function(input$locationselect)),
-          scale = as.function(as.list.function(input$scaleselect))
-        )$outlier,
+        ReactiveEpplabOutlier()$outlier,
         1,
         sum
       ) > input$numoutlier]
     )
-    
+
   })
   #-----------------------------------------Code Output------------------------------------------------------------
   
@@ -629,7 +593,7 @@ shinyServer(function(input, output, session) {
       input$chooseObjectscree,
       ", which = 1:",
       input$sampleSize[2],
-      ")",
+      ", xlab = \"Projections\")",
       "\n#--- Angles ---",
       "\nplot(",
       input$chooseObjectangles,
@@ -641,26 +605,28 @@ shinyServer(function(input, output, session) {
       input$chooseObjectruns,
       ",which = c(",
       input$run,
-      "))",
+      "), labels = , paste( 
+        cbind(\"Projection\",c(",input$run,"))[,1],
+        cbind(\"Projection\",c(",input$run,"))[,2]))",
       "\n#--- Col ---",
       "\nplot(fitted(",
       input$chooseObjectcol,
       ", which = ",
-      "as.numeric(unlist(strsplit(\"",
+      "c(",
       input$colruns2,
-      "\", split = \",\"))),), col = rainbow(length(levels(factor(X[ , \"",
+      ")), col = rainbow(length(levels(factor(X[ , \"",
       input$choosecolor,
       "\"]))))[factor(X[ , \"",
       input$choosecolor,
-      "\"])], pch = 16)",
+      "\"])], pch = 16,
+          xlab = paste(\"Projection\",c(",input$colruns2,")[1]),
+          ylab = paste(\"Projection\",c(",input$colruns2,")[2]))",
       "\n#---------- Marginal Plots ----------",
       "\nplot(",
       input$chooseObjectmarg,
-      ",which = as.numeric(unlist(strsplit(\"",
+      ",which = c(",
       input$marg,
-      "\", split = \",\"))), layout = c(3, ceiling(length(strsplit(\"",
-      input$marg,
-      "\", split = \", \")[[1]]) / 3)), xlab = \"Runs\")",
+      "), layout = c(3, ",ceiling(length(input$marg)/3),"), xlab = \"Projections\")",
       "\n#---------- Aggregation ----------",
       "\npairs(as.matrix(X[",
       input$eppobsselect,
@@ -876,7 +842,7 @@ shinyServer(function(input, output, session) {
           input$chooseObjectscree,
           ", which = 1:",
           input$sampleSize[2],
-          ")",
+          ", xlab = \"Projections\")",
           "\n#--- Angles ---",
           "\nplot(",
           input$chooseObjectangles,
@@ -888,26 +854,28 @@ shinyServer(function(input, output, session) {
           input$chooseObjectruns,
           ",which = c(",
           input$run,
-          "))",
+          "), labels = , paste( 
+        cbind(\"Projection\",c(",input$run,"))[,1],
+        cbind(\"Projection\",c(",input$run,"))[,2]))",
           "\n#--- Col ---",
           "\nplot(fitted(",
           input$chooseObjectcol,
           ", which = ",
-          "as.numeric(unlist(strsplit(\"",
+          "c(",
           input$colruns2,
-          "\", split = \",\"))),), col = rainbow(length(levels(factor(X[ , \"",
+          ")), col = rainbow(length(levels(factor(X[ , \"",
           input$choosecolor,
           "\"]))))[factor(X[ , \"",
           input$choosecolor,
-          "\"])], pch = 16)",
+          "\"])], pch = 16,
+          xlab = paste(\"Projection\",c(",input$colruns2,")[1]),
+          ylab = paste(\"Projection\",c(",input$colruns2,")[2]))",
           "\n#---------- Marginal Plots ----------",
           "\nplot(",
           input$chooseObjectmarg,
-          ",which = as.numeric(unlist(strsplit(\"",
+          ",which = c(",
           input$marg,
-          "\", split = \",\"))), layout = c(3, ceiling(length(strsplit(\"",
-          input$marg,
-          "\", split = \", \")[[1]]) / 3)), xlab = \"Runs\")",
+          "), layout = c(3, ",ceiling(length(input$marg)/3),"), xlab = \"Projections\")",
           "\n#---------- Aggregation ----------",
           "\npairs(as.matrix(X[",
           input$eppobsselect,

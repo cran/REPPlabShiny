@@ -1,5 +1,8 @@
 LOG of the CHANGES in the package REPPlabShiny
 
+Version 0.4.1:
+* Fixed some problems for the output in case no outlier was detected
+
 Version 0.4:
 * First version submitted to CRAN
 
