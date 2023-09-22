@@ -26,13 +26,12 @@ if(interactive()){
  }
 }
 \references{
-Fischer, D., Berro, A, Nordhausen, K. and Ruiz-Gazen, A. (2019), 
-\emph{REPPlab: An R package for detecting clusters and outliers using exploratory projection pursuit}, 
-Communications in Statistics - Simulation and Computation, <doi:10.1080/03610918.2019.1626880>.
+Fischer, D., Berro, A, Nordhausen, K. and Ruiz-Gazen, A. (2019),
+\emph{REPPlab: An R package for detecting clusters and outliers using exploratory projection pursuit},
+Communications in Statistics - Simulation and Computation, \url{doi:10.1080/03610918.2019.1626880}.
 }
 \seealso{
-\href{https://doi.org/10.1080/03610918.2019.1626880}{REPPlab}, 
-\href{https://shiny.rstudio.com/}{Shiny}, 
+\href{https://shiny.posit.co/}{Shiny},
 \code{\link[REPPlab]{EPPlab}}
 }
 \keyword{multivariate}

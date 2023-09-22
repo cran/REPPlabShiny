@@ -15,8 +15,7 @@
 #' Communications in Statistics - Simulation and Computation, <doi:10.1080/03610918.2019.1626880>.
 #' 
 #' @seealso 
-#' \href{https://doi.org/10.1080/03610918.2019.1626880}{REPPlab}, 
-#' \href{https://shiny.rstudio.com/}{Shiny}, 
+#' \href{https://shiny.posit.co/}{Shiny}, 
 #' \code{\link[REPPlab]{EPPlab}}
 #'
 #' @keywords multivariate

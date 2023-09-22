@@ -1,5 +1,9 @@
 LOG of the CHANGES in the package REPPlabShiny
 
+Version 0.4.2:
+* Changing email address for maintainer
+* fixing a note from CRAN
+
 Version 0.4.1:
 * Fixed some problems for the output in case no outlier was detected
 
